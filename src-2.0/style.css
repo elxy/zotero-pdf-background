@@ -5,3 +5,6 @@
 window[data-green-instead] .row {
 	color: green;
 }
+
+.textLayer{display:block;background-color:rgba(155,189,133,0.5);}
+
