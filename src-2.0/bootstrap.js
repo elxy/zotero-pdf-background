@@ -20,6 +20,7 @@ async function startup({ id, version, rootURI }) {
 	Services.scriptloader.loadSubScript(rootURI + 'make-it-red.js');
 	MakeItRed.init({ id, version, rootURI });
 	MakeItRed.addToAllWindows();
+	MakeItRed.registerNotifier();
 	await MakeItRed.main();
 }
 
@@ -34,6 +35,7 @@ function onMainWindowUnload({ window }) {
 function shutdown() {
 	log("Shutting down 2.0");
 	MakeItRed.removeFromAllWindows();
+	MakeItRed.unregisterNotifier();
 	MakeItRed = undefined;
 }
 
