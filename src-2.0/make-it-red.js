@@ -62,27 +62,6 @@ MakeItRed = {
 		}
 	},
 
-	removeStyleHTMLFromReader(reader) {
-		this.log("Remove style HTML from " + reader.tabID);
-
-		if (!this.addedReaderIDs.get(reader.tabID)) {
-			this.log("No need to remove style HTML");
-			return;
-		}
-
-		let viewer = reader._iframeWindow.wrappedJSObject.PDFViewerApplication.pdfViewer.viewer;
-		// 获取父元素的所有子元素
-		var children = viewer.childNodes;
-		// 遍历子元素
-		for (var i = 0; i < children.length; i++) {
-			var child = children[i];
-			// 检查子元素的ID
-			if (child.id === this.styleID) {
-				viewer.removeChild(child);
-			}
-		}
-	},
-
 	addToWindow(window) {
 		let doc = window.document;
 
@@ -138,7 +117,7 @@ MakeItRed = {
 		}
 
 		for (let reader of Zotero.Reader._readers) {
-			this.removeStyleHTMLFromReader(reader);
+			this.stylingReader(reader, false);
 		}
 	},
 
