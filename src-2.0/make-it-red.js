@@ -132,12 +132,28 @@ MakeItRed = {
 	registerNotifier() {
 		const callback = {
 			notify: async (event, type, ids, extraData) => {
-				if (event == "select" && type == "tab" && extraData[ids[0]].type == "reader") {
-					var reader = Zotero.Reader.getByTabID(ids[0]);
-					var enabled = Zotero.Prefs.get('pdf-background.style.enabled', true);
-					this.log('notify ' + enabled);
-					this.stylingReader(reader, enabled);
+				if (!(event == "select" && type == "tab" && extraData[ids[0]].type == "reader")) {
+					return;
 				}
+
+				var reader = Zotero.Reader.getByTabID(ids[0]);
+				if (reader._type != 'pdf') {
+					return;
+				}
+				await reader._waitForReader();
+
+				let viewer = reader._iframeWindow?.PDFViewerApplication?.pdfViewer;
+				let t = 0;
+				while (!viewer?.firstPagePromise && t < 100) {
+					t++;
+					await Zotero.Promise.delay(10);
+					viewer = reader._iframeWindow?.PDFViewerApplication?.pdfViewer;
+				}
+				await viewer?.firstPagePromise;
+
+				var enabled = Zotero.Prefs.get('pdf-background.style.enabled', true);
+				this.log('notify ' + enabled);
+				this.stylingReader(reader, enabled);
 			},
 		};
 
